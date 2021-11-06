@@ -1,0 +1,35 @@
+li {
+	border: 1px solid black;
+	color: black;
+	background-color: #ADD8E6;
+}
+
+#business_list {
+position: absolute;
+left: 0;
+top: 0;
+width: 380px;
+height: 700px;
+overflow:auto;
+}
+
+#contacts {
+position: absolute;
+left: 820px;
+top: 0px;
+width: 300px;
+height: 700px;
+overflow:auto;
+
+}
+
+#tickets {
+position: absolute;
+left: 400px;
+top: 0px;
+width: 400px;
+height: 700px;
+overflow:auto;
+
+
+}
