@@ -29,14 +29,12 @@ $row = mysql_fetch_assoc($result)
 }
 else
 {
-$site = $_POST["site"];
-if (strpos($site,"http://") === false )
-	$site = "http://".$site;
-$query = "update brm_business set name = '".mysql_real_escape_string($_POST["name"])."',	
-site = '".mysql_real_escape_string($site)."',
-	tel = '".mysql_real_escape_string($_POST["tel"])."',
-		type = '".mysql_real_escape_string($_POST["type"])."'
- where id = '".mysql_real_escape_string($_POST["businessId"])."';";
+$query = "update brm_business set name = '".mysql_real_escape_string($_POST["name"])."',
+site = '".mysql_real_escape_string($_POST["site"])."',
+last_modified = now(),
+tel = '".mysql_real_escape_string($_POST["tel"])."',
+type = '".mysql_real_escape_string($_POST["type"])."'
+where id = '".mysql_real_escape_string($_POST["businessId"])."';";
 
 // Perform Query
 $result = mysql_query($query);

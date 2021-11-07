@@ -2,11 +2,8 @@
 <?php
 $link = mysql_connect('localhost', $dbuser, $dbpassword);
 $db_selected = mysql_select_db($dbname, $link);
-$site = $_POST["site"];
-if (strpos($site,"http://") === false )
-	$site = "http://".$site;
 $query = "insert into brm_business (name,	site,	tel,	type, last_modified) values ('".mysql_real_escape_string($_POST["name"])."','"
-.mysql_real_escape_string($site)."','"
+.mysql_real_escape_string($_POST["site"])."','"
 .mysql_real_escape_string($_POST["tel"])."','"
 .mysql_real_escape_string($_POST["type"])."', now());";
 

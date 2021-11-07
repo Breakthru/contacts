@@ -30,7 +30,8 @@ $row = mysql_fetch_assoc($result);
 else // don't show edit form, perform edit
 {
 
-$query = "update brm_contact set 	
+$query = "update brm_contact set
+last_modified = now(),
 name = '".mysql_real_escape_string($_POST["name"])."',
 mail = '".mysql_real_escape_string($_POST["mail"])."',
 tel = '".mysql_real_escape_string($_POST["tel"])."'

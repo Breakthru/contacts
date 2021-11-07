@@ -2,7 +2,7 @@
 <?php
 $link = mysql_connect('localhost', $dbuser, $dbpassword);
 $db_selected = mysql_select_db($dbname, $link);
-$query = "insert into brm_tickets (business_id,	what,	payment, date, last_modified) values ('"
+$query = "insert into brm_tickets (business_id,	what, payment, date, last_modified) values ('"
 .mysql_real_escape_string($_POST["business_id"])."','"
 .mysql_real_escape_string($_POST["what"])."','"
 .mysql_real_escape_string($_POST["payment"])."', now(), now());";

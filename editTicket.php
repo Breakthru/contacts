@@ -20,7 +20,7 @@ $row = mysql_fetch_assoc($result);
 <input type="hidden" name="ticketId" value="<?php echo $_POST['ticketIdToEdit'] ?>" />
 <br/>
 <label for="what">what</label><textarea name="what" type="textarea"><?php echo $row['what'];?></textarea><br/>
-<label for="paid">payment</label><input name="pay" type="text" value="<?php echo $row['payment'];?>"/><br/>
+<label for="paid">payment</label><input name="paid" type="text" value="<?php echo $row['payment'];?>"/><br/>
 <input type="submit" value="Edit"></input>
 </form>
 </div>
@@ -32,6 +32,7 @@ else // don't show edit form, perform edit
 $query = "update brm_tickets set 	
 what = '".mysql_real_escape_string($_POST["what"])."',
 date = now(),
+last_modified = now(),
 payment = '".mysql_real_escape_string($_POST["paid"])."'
 where id = '".mysql_real_escape_string($_POST["ticketId"])."';";
 

@@ -37,13 +37,19 @@ while ($row = mysql_fetch_assoc($result)) {
     echo "<li>";
     echo $row['type'].": ".$row['name']." , web: <a href='".$row['site']."'>".$row['site']."</a> , tel: ".$row['tel'];
     echo "<br />";
-    echo "<form action='index.php' method='POST'>";
+    $action = "index.php";
+    if($_GET['admin']) {
+        $action = "index.php?admin=true";
+    }
+    echo "<form action='".$action."' method='POST'>";
     echo "<input type='hidden' name='businessId' value='".$row['id']."'>";
     echo "<input class='button' type='submit' value='show tickets'>";
     echo "</form>";
-    echo "<form action='editBusiness.php' method='POST'>";
-    echo "<input type='hidden' name='businessIdToEdit' value='".$row['id']."'>";
-    echo "<input class='button' type='submit' value='edit'></form>";
+    if($_GET['admin']) {
+        echo "<form action='editBusiness.php' method='POST'>";
+        echo "<input type='hidden' name='businessIdToEdit' value='".$row['id']."'>";
+        echo "<input class='button' type='submit' value='edit'></form>";
+    }
     echo "</li>";
 }
 echo "</ul>";
@@ -84,11 +90,13 @@ if (!$result) {
 echo "<ul>";
 while ($row = mysql_fetch_assoc($result)) {
     echo "<li>";
-    echo "[".$row['id']."] ".$row['name'].": ".$row['what']." , cost: ".$row['payment'].", date: ".$row['date'];
-    echo "<br />";
-    echo "<form action='editTicket.php' method='POST'>";
-    echo "<input type='hidden' name='ticketIdToEdit' value='".$row['id']."'>";
-    echo "<input class='button' type='submit' value='edit'></form>";
+    echo "[".$row['id']."] ".$row['name'].": ".$row['what']."<br/>cost: ".$row['payment']."<br/>date: ".$row['date'];
+    echo "<br />\n";
+    if($_GET['admin']) {
+        echo "<form action='editTicket.php' method='POST'>";
+        echo "<input type='hidden' name='ticketIdToEdit' value='".$row['id']."'>";
+        echo "<input class='button' type='submit' value='edit'></form>";
+    }
     echo "</li>";
 }
 echo "</ul>";
@@ -109,67 +117,75 @@ echo "<ul>";
 while ($row = mysql_fetch_assoc($result)) {
     echo "<li>";
     echo $row['bname'].": ".$row['name']." , email: <a href = 'mailto:".$row['mail']."'>".$row['mail']."</a>, tel: ".$row['tel'];
-    echo "<br />";
-    echo "<form action='editContact.php' method='POST'>";
-    echo "<input type='hidden' name='contactIdToEdit' value='".$row['id']."'>";
-    echo "<input class='button' type='submit' value='edit'></form>";
+    echo "<br />\n";
+    if($_GET['admin']) {
+        echo "<form action='editContact.php' method='POST'>";
+        echo "<input type='hidden' name='contactIdToEdit' value='".$row['id']."'>";
+        echo "<input class='button' type='submit' value='edit'></form>";
+    }
     echo "</li>";
 }
 echo "</ul>";
 }
 ?>
 
-<div id="tickets">
-<h2> tickets </h2>
-<?php
-ticketList();
-?>
-<?php if($_POST['businessId']) { ?>
-<div style="border: 1px solid black;">
-<h4> add ticket</h4>
-<form action="addTicket.php" method="post">
-<?php business_id_select(); ?>
-<label for="what">what</label><textarea name="what" type="textarea"></textarea><br/>
-<label for="payment">paid</label><input name="payment" type="text" value="0.00" size="5"><br/>
-<input type="submit" value="add">
-</form>
+<div id="header">
+<a href="/contacts/index.php" class="button">home</a>
+<a href="/contacts/index.php?admin=true" class="button">edit</a>
 </div>
-<?php } ?>
+
+<div id="tickets">
+    <h2> tickets </h2>
+    <?php
+    ticketList();
+    ?>
+    <?php if($_POST['businessId']) { ?>
+    <div style="border: 1px solid black;">
+        <h4> add ticket</h4>
+        <form action="addTicket.php" method="post">
+        <?php business_id_select(); ?>
+        <label for="what">what</label><textarea name="what" type="textarea"></textarea><br/>
+        <label for="payment">paid</label><input name="payment" type="text" value="0.00" size="5"><br/>
+        <input type="submit" value="add">
+        </form>
+    </div>
+    <?php } ?>
 </div>
 
 <div id="business_list">
-<h2> business </h2>
-<?php
-businessList();
-?>
-<div style="border: 1px solid black;">
-<h4> add new</h4>
-<form action="addBusiness.php" method="post">
-<label for="name">business name</label><input name="name" type="text" /><br/>
-<label for="type">business type</label><input name="type" type="text" /><br/>
-<label for="site">business website</label><input name="site" type="text" /><br/>
-<label for="tel">business telephone</label><input name="tel" type="text" /><br/>
-<input type="submit" value="add">
-</form>
+    <h2> business </h2>
+    <?php
+    businessList();
+    ?>
+    <div style="border: 1px solid black;">
+        <h4> add new</h4>
+        <form action="addBusiness.php" method="post">
+        <label for="name">business name</label><input name="name" type="text" /><br/>
+        <label for="type">business type</label><input name="type" type="text" /><br/>
+        <label for="site">business website</label><input name="site" type="text" /><br/>
+        <label for="tel">business telephone</label><input name="tel" type="text" /><br/>
+        <input type="submit" value="add">
+        </form>
+    </div>
 </div>
-</div>
+
 <div id="contacts">
-<h2> contacts </h2>
-<?php
-contacts();
-?>
-<?php if($_POST['businessId']) { ?>
-<div style="border: 1px solid black;">
-<h4> add contact</h4>
-<form action="addContact.php" method="post">
-<label for="business_id">business</label><?php business_id_select(); ?><br/>
-<label for="name">name</label><input name="name" type="text" /><br/>
-<label for="mail">email</label><input name="mail" type="text" /><br/>
-<label for="tel">tel</label><input name="tel" type="text" /><br/>
-<input type="submit" value="add">
-</form>
-</div>
-<?php } ?>
+    <h2> contacts </h2>
+    <?php
+    contacts();
+    ?>
+    <?php if($_POST['businessId']) { ?>
+    <div style="border: 1px solid black;">
+        <h4> add contact</h4>
+        <form action="addContact.php" method="post">
+        <?php business_id_select(); ?>
+        <label for="name">name</label><input name="name" type="text" /><br/>
+        <label for="mail">email</label><input name="mail" type="text" /><br/>
+        <label for="tel">tel</label><input name="tel" type="text" /><br/>
+        <input type="submit" value="add">
+        </form>
+    </div>
+    <?php } ?>
 </div>
 <?php
 // clean up
