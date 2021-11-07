@@ -2,11 +2,11 @@
 <?php
 $link = mysql_connect('localhost', $dbuser, $dbpassword);
 $db_selected = mysql_select_db($dbname, $link);
-$query = "insert into brm_contact (business_id, name,	mail,	tel) values ('"
+$query = "insert into brm_contact (business_id, name,	mail,	tel, last_modified) values ('"
 .mysql_real_escape_string($_POST["business_id"])."','"
 .mysql_real_escape_string($_POST["name"])."','"
 .mysql_real_escape_string($_POST["mail"])."','"
-.mysql_real_escape_string($_POST["tel"])."');";
+.mysql_real_escape_string($_POST["tel"])."', now());";
 
 // Perform Query
 $result = mysql_query($query);

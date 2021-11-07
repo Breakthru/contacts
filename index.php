@@ -11,7 +11,6 @@ die();
 <link rel="icon" 
       type="image/png" 
       href="favicon.png" />
-<meta name="generator" content="Bluefish 1.0.7">
 <meta name="author" content="Marco Paladini">
 </head>
 <body>
@@ -27,7 +26,7 @@ if (!$link) {
 function businessList()
 {
 // Perform Query
-$result = mysql_query("select * from brm_business");
+$result = mysql_query("select * from brm_business order by last_modified desc;");
 // This shows the actual query sent to MySQL, and the error. Useful for debugging.
 if (!$result) {
     $message  = 'Invalid query: ' . mysql_error() . "\n";
@@ -52,27 +51,31 @@ echo "</ul>";
 
 function business_id_select()
 {
+if($_POST['businessId']) {
+    echo "<input type='hidden' name='business_id' value='".$_POST['businessId']."'></input>'";
+    return;
+}
 // Perform Query
-$result = mysql_query("select * from brm_business");
+$result = mysql_query("select * from brm_business order by last_modified desc;");
 // This shows the actual query sent to MySQL, and the error. Useful for debugging.
 if (!$result) {
     $message  = 'Invalid query: ' . mysql_error() . "\n";
     die($message);
 }
-    echo "<select name='business_id'>";
+    echo "<label for='business_id'>business</label><select name='business_id'>";
 while ($row = mysql_fetch_assoc($result)) {
 
     echo "<option value=".$row['id'].">".$row['name']."</option>";
 }
-echo "</select>";
+echo "</select><br/>";
 }
 
 function ticketList()
 {
 // Perform Query
 if(!$_POST['businessId']) return;
-$result = mysql_query("select t.id as id, b.name as name, t.what as what, t.payment as payment, t.date as date from brm_tickets t left join brm_business b on b.id = t.business_id where b.id = 
-".mysql_real_escape_string($_POST['businessId']).";");
+$result = mysql_query("select t.id as id, b.name as name, t.what as what, t.payment as payment, t.last_modified as date from brm_tickets t left join brm_business b on b.id = t.business_id where b.id =
+".mysql_real_escape_string($_POST['businessId'])." order by t.last_modified desc;");
 // This shows the actual query sent to MySQL, and the error. Useful for debugging.
 if (!$result) {
     $message  = 'Invalid query: ' . mysql_error() . "\n";
@@ -96,7 +99,7 @@ function contacts()
 if(!$_POST['businessId']) return;
 // Perform Query
 $result = mysql_query("select c.id as id, b.name as bname, c.name as name, c.mail as mail, c.tel as tel from brm_contact c left join brm_business b on b.id = c.business_id
- where b.id = ".mysql_real_escape_string($_POST['businessId']).";");
+ where b.id = ".mysql_real_escape_string($_POST['businessId'])." order by c.last_modified desc;");
 // This shows the actual query sent to MySQL, and the error. Useful for debugging.
 if (!$result) {
     $message  = 'Invalid query: ' . mysql_error() . "\n";
@@ -115,6 +118,26 @@ while ($row = mysql_fetch_assoc($result)) {
 echo "</ul>";
 }
 ?>
+
+<div id="tickets">
+<h2> tickets </h2>
+<?php
+ticketList();
+?>
+<?php if($_POST['businessId']) { ?>
+<div style="border: 1px solid black;">
+<h4> add ticket</h4>
+<form action="addTicket.php" method="post">
+<?php business_id_select(); ?>
+<label for="what">what</label><textarea name="what" type="textarea"></textarea><br/>
+<label for="payment">paid</label><input name="payment" type="text" value="0.00" size="5"></input><br/>
+<input type="submit" value="add"></input>
+</form>
+</div>
+<?php } ?>
+</div>
+</div>
+
 <div id="business_list">
 <h2> business </h2>
 <?php
@@ -131,24 +154,6 @@ businessList();
 </form>
 </div>
 </div>
-<div id="tickets">
-<h2> tickets </h2>
-<?php
-ticketList();
-?>
-<?php if($_POST['businessId']) { ?>
-<div style="border: 1px solid black;">
-<h4> add new</h4>
-<form action="addTicket.php" method="post">
-<label for="business_id">business</label><?php business_id_select(); ?><br/>
-<label for="what">what</label><textarea name="what" type="textarea"></textarea><br/>
-<label for="payment">paid</label><input name="payment" type="text" value="0.00" size="5"></input><br/>
-<input type="submit" value="add"></input>
-</form>
-</div>
-<?php } ?>
-</div>
-</div>
 <div id="contacts">
 
 <h2> contacts </h2>
@@ -157,7 +162,7 @@ contacts();
 ?>
 <?php if($_POST['businessId']) { ?>
 <div style="border: 1px solid black;">
-<h4> add new</h4>
+<h4> add contact</h4>
 <form action="addContact.php" method="post">
 <label for="business_id">business</label><?php business_id_select(); ?><br/>
 <label for="name">name</label><input name="name" type="text" /><br/>
