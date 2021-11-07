@@ -38,12 +38,12 @@ while ($row = mysql_fetch_assoc($result)) {
     echo $row['type'].": ".$row['name']." , web: <a href='".$row['site']."'>".$row['site']."</a> , tel: ".$row['tel'];
     echo "<br />";
     echo "<form action='index.php' method='POST'>";
-    echo "<input type='hidden' name='businessId' value='".$row['id']."'></input>";
-    echo "<input type='submit' value='show tickets'></input>";
+    echo "<input type='hidden' name='businessId' value='".$row['id']."'>";
+    echo "<input class='button' type='submit' value='show tickets'>";
     echo "</form>";
     echo "<form action='editBusiness.php' method='POST'>";
-    echo "<input type='hidden' name='businessIdToEdit' value='".$row['id']."'></input>";
-    echo "<input type='submit' value='edit'></input></form>";
+    echo "<input type='hidden' name='businessIdToEdit' value='".$row['id']."'>";
+    echo "<input class='button' type='submit' value='edit'></form>";
     echo "</li>";
 }
 echo "</ul>";
@@ -52,7 +52,7 @@ echo "</ul>";
 function business_id_select()
 {
 if($_POST['businessId']) {
-    echo "<input type='hidden' name='business_id' value='".$_POST['businessId']."'></input>'";
+    echo "<input type='hidden' name='business_id' value='".$_POST['businessId']."'>'";
     return;
 }
 // Perform Query
@@ -87,8 +87,8 @@ while ($row = mysql_fetch_assoc($result)) {
     echo "[".$row['id']."] ".$row['name'].": ".$row['what']." , cost: ".$row['payment'].", date: ".$row['date'];
     echo "<br />";
     echo "<form action='editTicket.php' method='POST'>";
-    echo "<input type='hidden' name='ticketIdToEdit' value='".$row['id']."'></input>";
-    echo "<input type='submit' value='edit'></input></form>";
+    echo "<input type='hidden' name='ticketIdToEdit' value='".$row['id']."'>";
+    echo "<input class='button' type='submit' value='edit'></form>";
     echo "</li>";
 }
 echo "</ul>";
@@ -111,8 +111,8 @@ while ($row = mysql_fetch_assoc($result)) {
     echo $row['bname'].": ".$row['name']." , email: <a href = 'mailto:".$row['mail']."'>".$row['mail']."</a>, tel: ".$row['tel'];
     echo "<br />";
     echo "<form action='editContact.php' method='POST'>";
-    echo "<input type='hidden' name='contactIdToEdit' value='".$row['id']."'></input>";
-    echo "<input type='submit' value='edit'></input></form>";
+    echo "<input type='hidden' name='contactIdToEdit' value='".$row['id']."'>";
+    echo "<input class='button' type='submit' value='edit'></form>";
     echo "</li>";
 }
 echo "</ul>";
@@ -130,12 +130,11 @@ ticketList();
 <form action="addTicket.php" method="post">
 <?php business_id_select(); ?>
 <label for="what">what</label><textarea name="what" type="textarea"></textarea><br/>
-<label for="payment">paid</label><input name="payment" type="text" value="0.00" size="5"></input><br/>
-<input type="submit" value="add"></input>
+<label for="payment">paid</label><input name="payment" type="text" value="0.00" size="5"><br/>
+<input type="submit" value="add">
 </form>
 </div>
 <?php } ?>
-</div>
 </div>
 
 <div id="business_list">
@@ -150,12 +149,11 @@ businessList();
 <label for="type">business type</label><input name="type" type="text" /><br/>
 <label for="site">business website</label><input name="site" type="text" /><br/>
 <label for="tel">business telephone</label><input name="tel" type="text" /><br/>
-<input type="submit" value="add"></input>
+<input type="submit" value="add">
 </form>
 </div>
 </div>
 <div id="contacts">
-
 <h2> contacts </h2>
 <?php
 contacts();
@@ -168,12 +166,10 @@ contacts();
 <label for="name">name</label><input name="name" type="text" /><br/>
 <label for="mail">email</label><input name="mail" type="text" /><br/>
 <label for="tel">tel</label><input name="tel" type="text" /><br/>
-<input type="submit" value="add"></input>
+<input type="submit" value="add">
 </form>
 </div>
 <?php } ?>
-</div>
-</div>
 </div>
 <?php
 // clean up
