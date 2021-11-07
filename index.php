@@ -55,7 +55,7 @@ echo "</ul>";
 function business_id_select($mysqli)
 {
 if($_POST['businessId']) {
-    echo "<input type='hidden' name='business_id' value='".$_POST['businessId']."'>'";
+    echo "<input type='hidden' name='business_id' value='".$_POST['businessId']."'>";
     return;
 }
 // Perform Query
@@ -175,7 +175,7 @@ echo "</ul>";
     <div style="border: 1px solid black;">
         <h4> add contact</h4>
         <form action="addContact.php" method="post">
-        <?php business_id_select(); ?>
+        <?php business_id_select($mysqli); ?>
         <label for="name">name</label><input name="name" type="text" /><br/>
         <label for="mail">email</label><input name="mail" type="text" /><br/>
         <label for="tel">tel</label><input name="tel" type="text" /><br/>
