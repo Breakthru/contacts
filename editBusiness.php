@@ -1,18 +1,12 @@
 <?php include_once("login.php"); ?>
 <?php
-$link = mysql_connect('localhost', $dbuser, $dbpassword);
-$db_selected = mysql_select_db($dbname, $link);
+$mysqli = new mysqli('localhost', $dbuser, $dbpassword, $dbname);
 if ($_POST["businessIdToEdit"] && !$_POST["businessId"]) // show edit form
 {
 // Perform Query
-$result = mysql_query("select * from brm_business where
-							id = ".mysql_real_escape_string($_POST["businessIdToEdit"]).";");
-// This shows the actual query sent to MySQL, and the error. Useful for debugging.
-if (!$result) {
-    $message  = 'Invalid query: ' . mysql_error() . "\n";
-    die($message);
-}
-$row = mysql_fetch_assoc($result)
+$result = $mysqli->query("select * from brm_business where
+							id = ".$mysqli->real_escape_string($_POST["businessIdToEdit"]).";");
+$row = $result->fetch_assoc()
 ?>
 <div style="border: 1px solid black;">
 <h4> Edit Business</h4>
@@ -29,21 +23,15 @@ $row = mysql_fetch_assoc($result)
 }
 else
 {
-$query = "update brm_business set name = '".mysql_real_escape_string($_POST["name"])."',
-site = '".mysql_real_escape_string($_POST["site"])."',
+$query = "update brm_business set name = '".$mysqli->real_escape_string($_POST["name"])."',
+site = '".$mysqli->real_escape_string($_POST["site"])."',
 last_modified = now(),
-tel = '".mysql_real_escape_string($_POST["tel"])."',
-type = '".mysql_real_escape_string($_POST["type"])."'
-where id = '".mysql_real_escape_string($_POST["businessId"])."';";
+tel = '".$mysqli->real_escape_string($_POST["tel"])."',
+type = '".$mysqli->real_escape_string($_POST["type"])."'
+where id = '".$mysqli->real_escape_string($_POST["businessId"])."';";
 
 // Perform Query
-$result = mysql_query($query);
-// This shows the actual query sent to MySQL, and the error. Useful for debugging.
-if (!$result) {
-    $message  = 'Invalid query: ' . mysql_error() . "\n";
-    $message .= 'Whole query: ' . $query;
-    die($message);
-}
+$result = $mysqli->query($query);
 
 // return to site :)
 include_once("index.php");

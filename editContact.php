@@ -1,18 +1,12 @@
 <?php include_once("login.php"); ?>
 <?php
-$link = mysql_connect('localhost', $dbuser, $dbpassword);
-$db_selected = mysql_select_db($dbname, $link);
+$mysqli = new mysqli('localhost', $dbuser, $dbpassword, $dbname);
 if ($_POST["contactIdToEdit"] && !$_POST["contactId"]) // show edit form
 {
 // Perform Query
-$result = mysql_query("select * from brm_contact where
-							id = ".mysql_real_escape_string($_POST["contactIdToEdit"]).";");
-// This shows the actual query sent to MySQL, and the error. Useful for debugging.
-if (!$result) {
-    $message  = 'Invalid query: ' . mysql_error() . "\n";
-    die($message);
-}
-$row = mysql_fetch_assoc($result);
+$result = $mysqli->query("select * from brm_contact where
+							id = ".$mysqli->real_escape_string($_POST["contactIdToEdit"]).";");
+$row = $result->fetch_assoc();
 ?>
 <div style="border: 1px solid black;">
 <h4> Edit Contact</h4>
@@ -32,19 +26,13 @@ else // don't show edit form, perform edit
 
 $query = "update brm_contact set
 last_modified = now(),
-name = '".mysql_real_escape_string($_POST["name"])."',
-mail = '".mysql_real_escape_string($_POST["mail"])."',
-tel = '".mysql_real_escape_string($_POST["tel"])."'
-where id = '".mysql_real_escape_string($_POST["contactId"])."';";
+name = '".$mysqli->real_escape_string($_POST["name"])."',
+mail = '".$mysqli->real_escape_string($_POST["mail"])."',
+tel = '".$mysqli->real_escape_string($_POST["tel"])."'
+where id = '".$mysqli->real_escape_string($_POST["contactId"])."';";
 
 // Perform Query
-$result = mysql_query($query);
-// This shows the actual query sent to MySQL, and the error. Useful for debugging.
-if (!$result) {
-    $message  = 'Invalid query: ' . mysql_error() . "\n";
-    $message .= 'Whole query: ' . $query;
-    die($message);
-}
+$result = $mysqli->query($query);
 
 // return to site :)
 include_once("index.php");

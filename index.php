@@ -1,4 +1,4 @@
-<?php include_once("login.php"); 
+<?php include_once("login.php");
 if (!($_SESSION['controllo_user']==$user AND $_SESSION['controllo_password']==$password))
 {
 die();
@@ -16,24 +16,21 @@ die();
 <body>
 <?php
 // load database
-$link = mysql_connect('localhost', $dbuser, $dbpassword);
-$db_selected = mysql_select_db($dbname, $link);
-if (!$link) {
-    die('Could not connect: ' . mysql_error());
-}
+$mysqli = new mysqli('localhost', $dbuser, $dbpassword, $dbname);
+
 
 // print functions definitions
-function businessList()
+function businessList($mysqli)
 {
 // Perform Query
-$result = mysql_query("select * from brm_business order by last_modified desc;");
+$result = $mysqli->query("select * from brm_business order by last_modified desc;");
 // This shows the actual query sent to MySQL, and the error. Useful for debugging.
 if (!$result) {
     $message  = 'Invalid query: ' . mysql_error() . "\n";
     die($message);
 }
 echo "<ul>";
-while ($row = mysql_fetch_assoc($result)) {
+while ($row = $result->fetch_assoc()) {
     echo "<li>";
     echo $row['type'].": ".$row['name']." , web: <a href='".$row['site']."'>".$row['site']."</a> , tel: ".$row['tel'];
     echo "<br />";
@@ -55,40 +52,40 @@ while ($row = mysql_fetch_assoc($result)) {
 echo "</ul>";
 }
 
-function business_id_select()
+function business_id_select($mysqli)
 {
 if($_POST['businessId']) {
     echo "<input type='hidden' name='business_id' value='".$_POST['businessId']."'>'";
     return;
 }
 // Perform Query
-$result = mysql_query("select * from brm_business order by last_modified desc;");
+$result = $mysqli->query("select * from brm_business order by last_modified desc;");
 // This shows the actual query sent to MySQL, and the error. Useful for debugging.
 if (!$result) {
     $message  = 'Invalid query: ' . mysql_error() . "\n";
     die($message);
 }
     echo "<label for='business_id'>business</label><select name='business_id'>";
-while ($row = mysql_fetch_assoc($result)) {
+while ($row = $result->fetch_assoc()) {
 
     echo "<option value=".$row['id'].">".$row['name']."</option>";
 }
 echo "</select><br/>";
 }
 
-function ticketList()
+function ticketList($mysqli)
 {
 // Perform Query
 if(!$_POST['businessId']) return;
-$result = mysql_query("select t.id as id, b.name as name, t.what as what, t.payment as payment, t.last_modified as date from brm_tickets t left join brm_business b on b.id = t.business_id where b.id =
-".mysql_real_escape_string($_POST['businessId'])." order by t.last_modified desc;");
+$result = $mysqli->query("select t.id as id, b.name as name, t.what as what, t.payment as payment, t.last_modified as date from brm_tickets t left join brm_business b on b.id = t.business_id where b.id =
+".$mysqli->real_escape_string($_POST['businessId'])." order by t.last_modified desc;");
 // This shows the actual query sent to MySQL, and the error. Useful for debugging.
 if (!$result) {
     $message  = 'Invalid query: ' . mysql_error() . "\n";
     die($message);
 }
 echo "<ul>";
-while ($row = mysql_fetch_assoc($result)) {
+while ($row = $result->fetch_assoc()) {
     echo "<li>";
     echo "[".$row['id']."] ".$row['name'].": ".$row['what']."<br/>cost: ".$row['payment']."<br/>date: ".$row['date'];
     echo "<br />\n";
@@ -102,19 +99,19 @@ while ($row = mysql_fetch_assoc($result)) {
 echo "</ul>";
 }
 
-function contacts()
+function contacts($mysqli)
 {
 if(!$_POST['businessId']) return;
 // Perform Query
-$result = mysql_query("select c.id as id, b.name as bname, c.name as name, c.mail as mail, c.tel as tel from brm_contact c left join brm_business b on b.id = c.business_id
- where b.id = ".mysql_real_escape_string($_POST['businessId'])." order by c.last_modified desc;");
+$result = $mysqli->query("select c.id as id, b.name as bname, c.name as name, c.mail as mail, c.tel as tel from brm_contact c left join brm_business b on b.id = c.business_id
+ where b.id = ".$mysqli->real_escape_string($_POST['businessId'])." order by c.last_modified desc;");
 // This shows the actual query sent to MySQL, and the error. Useful for debugging.
 if (!$result) {
     $message  = 'Invalid query: ' . mysql_error() . "\n";
     die($message);
 }
 echo "<ul>";
-while ($row = mysql_fetch_assoc($result)) {
+while ($row = $result->fetch_assoc()) {
     echo "<li>";
     echo $row['bname'].": ".$row['name']." , email: <a href = 'mailto:".$row['mail']."'>".$row['mail']."</a>, tel: ".$row['tel'];
     echo "<br />\n";
@@ -130,20 +127,20 @@ echo "</ul>";
 ?>
 
 <div id="header">
-<a href="/contacts/index.php" class="button">home</a>
-<a href="/contacts/index.php?admin=true" class="button">edit</a>
+<a href="index.php" class="button">home</a>
+<a href="index.php?admin=true" class="button">edit</a>
 </div>
 
 <div id="tickets">
     <h2> tickets </h2>
     <?php
-    ticketList();
+    ticketList($mysqli);
     ?>
     <?php if($_POST['businessId']) { ?>
     <div style="border: 1px solid black;">
         <h4> add ticket</h4>
         <form action="addTicket.php" method="post">
-        <?php business_id_select(); ?>
+        <?php business_id_select($mysqli); ?>
         <label for="what">what</label><textarea name="what" type="textarea"></textarea><br/>
         <label for="payment">paid</label><input name="payment" type="text" value="0.00" size="5"><br/>
         <input type="submit" value="add">
@@ -155,7 +152,7 @@ echo "</ul>";
 <div id="business_list">
     <h2> business </h2>
     <?php
-    businessList();
+    businessList($mysqli);
     ?>
     <div style="border: 1px solid black;">
         <h4> add new</h4>
@@ -172,7 +169,7 @@ echo "</ul>";
 <div id="contacts">
     <h2> contacts </h2>
     <?php
-    contacts();
+    contacts($mysqli);
     ?>
     <?php if($_POST['businessId']) { ?>
     <div style="border: 1px solid black;">
@@ -189,7 +186,7 @@ echo "</ul>";
 </div>
 <?php
 // clean up
-mysql_close($link);
+$mysqli->close();
 ?>
 </body>
 </html>

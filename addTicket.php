@@ -1,35 +1,23 @@
 <?php include_once("login.php"); ?>
 <?php
-$link = mysql_connect('localhost', $dbuser, $dbpassword);
-$db_selected = mysql_select_db($dbname, $link);
+$mysqli = new mysqli('localhost', $dbuser, $dbpassword, $dbname);
+
 $query = "insert into brm_tickets (business_id,	what, payment, date, last_modified) values ('"
-.mysql_real_escape_string($_POST["business_id"])."','"
-.mysql_real_escape_string($_POST["what"])."','"
-.mysql_real_escape_string($_POST["payment"])."', now(), now());";
+.$mysqli->real_escape_string($_POST["business_id"])."','"
+.$mysqli->real_escape_string($_POST["what"])."','"
+.$mysqli->real_escape_string($_POST["payment"])."', now(), now());";
 
 
 // Perform Query
-$result = mysql_query($query);
-// This shows the actual query sent to MySQL, and the error. Useful for debugging.
-if (!$result) {
-    $message  = 'Invalid query: ' . mysql_error() . "\n";
-    $message .= 'Whole query: ' . $query;
-    die($message);
-}
+$result = $mysqli->query($query);
+
 
 // update business
 $query = "UPDATE brm_business SET last_modified = now() WHERE id = '"
-.mysql_real_escape_string($_POST["business_id"])."';";
+.$mysqli->real_escape_string($_POST["business_id"])."';";
 
 // Perform Query
-$result = mysql_query($query);
-// This shows the actual query sent to MySQL, and the error. Useful for debugging.
-if (!$result) {
-    $message  = 'Invalid query: ' . mysql_error() . "\n";
-    $message .= 'Whole query: ' . $query;
-    die($message);
-}
-
+$result = $mysqli->query($query);
 
 // return to site :)
 include_once("index.php");

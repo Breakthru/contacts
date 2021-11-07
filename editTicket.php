@@ -1,18 +1,12 @@
 <?php include_once("login.php"); ?>
 <?php
-$link = mysql_connect('localhost', $dbuser, $dbpassword);
-$db_selected = mysql_select_db($dbname, $link);
+$mysqli = new mysqli('localhost', $dbuser, $dbpassword, $dbname);
 if ($_POST["ticketIdToEdit"] && !$_POST["ticketId"]) // show edit form
 {
 // Perform Query
-$result = mysql_query("select * from brm_tickets where
-							id = ".mysql_real_escape_string($_POST["ticketIdToEdit"]).";");
-// This shows the actual query sent to MySQL, and the error. Useful for debugging.
-if (!$result) {
-    $message  = 'Invalid query: ' . mysql_error() . "\n";
-    die($message);
-}
-$row = mysql_fetch_assoc($result);
+$result = $mysqli->query("select * from brm_tickets where
+							id = ".$mysqli->real_escape_string($_POST["ticketIdToEdit"]).";");
+$row = $result->fetch_assoc();
 ?>
 <div style="border: 1px solid black;">
 <h4> Edit Ticket</h4>
@@ -30,20 +24,14 @@ else // don't show edit form, perform edit
 {
 
 $query = "update brm_tickets set 	
-what = '".mysql_real_escape_string($_POST["what"])."',
+what = '".$mysqli->real_escape_string($_POST["what"])."',
 date = now(),
 last_modified = now(),
-payment = '".mysql_real_escape_string($_POST["paid"])."'
-where id = '".mysql_real_escape_string($_POST["ticketId"])."';";
+payment = '".$mysqli->real_escape_string($_POST["paid"])."'
+where id = '".$mysqli->real_escape_string($_POST["ticketId"])."';";
 
 // Perform Query
-$result = mysql_query($query);
-// This shows the actual query sent to MySQL, and the error. Useful for debugging.
-if (!$result) {
-    $message  = 'Invalid query: ' . mysql_error() . "\n";
-    $message .= 'Whole query: ' . $query;
-    die($message);
-}
+$result = $mysqli->query($query);
 
 // return to site :)
 include_once("index.php");
