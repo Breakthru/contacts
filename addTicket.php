@@ -20,5 +20,6 @@ $query = "UPDATE brm_business SET last_modified = now() WHERE id = '"
 $result = $mysqli->query($query);
 
 // return to site :)
+$_GET['b']=$_POST['business_id'];
 include_once("index.php");
 ?>

@@ -8,11 +8,33 @@ body {
   font-size: 1.4em;
 }
 
-li {
-	border: 1px solid black;
-	color: black;
-	background-color: #ADD8E6;
-	list-style-type: none; /* Remove bullets */
+.list {
+    margin: 2em;
+    padding-top: 0.4em;
+    padding-bottom: 0.4em;
+    color: rgb(23, 43, 77);
+    background-color: #0079bf;
+    border-radius: 3px;
+    box-sizing: border-box;
+    white-space: normal;
+    justify-content: center;
+}
+
+.ticket {
+    overflow: hidden;
+    border-radius: 3px;
+    margin-top: 0.2em;
+    margin-left: 0.4em;
+    margin-right: 0.4em;
+    padding: 6px 8px 2px;
+    position: relative;
+    z-index: 10;
+    background-color: #ffffff;
+}
+
+.add_form {
+    border: 1px solid black;
+    text-align: center;
 }
 
 #business_list {

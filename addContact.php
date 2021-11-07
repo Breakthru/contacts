@@ -12,5 +12,6 @@ $query = "insert into brm_contact (business_id, name,	mail,	tel, last_modified) 
 $result = $mysqli->query($query);
 
 // return to site :)
+$_GET['b']=$_POST['business_id'];
 include_once("index.php");
 ?>

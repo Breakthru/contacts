@@ -29,36 +29,25 @@ if (!$result) {
     $message  = 'Invalid query: ' . mysql_error() . "\n";
     die($message);
 }
-echo "<ul>";
+echo "<div class='list'>";
 while ($row = $result->fetch_assoc()) {
-    echo "<li>";
-    if ($row['type']) {
-        echo $row['type']." ";
-    }
-    echo $row['name']." , web: <a href='".$row['site']."'>".$row['site']."</a> , tel: ".$row['tel'];
+    echo "<div class='ticket'>";
+    echo "<a href='index.php?b=".$row['id']."&admin=".$_GET['admin']."' class='button'>".$row['name']."</a>";
     echo "<br />";
-    $action = "index.php";
-    if($_GET['admin']) {
-        $action = "index.php?admin=true";
-    }
-    echo "<form action='".$action."' method='POST'>";
-    echo "<input type='hidden' name='businessId' value='".$row['id']."'>";
-    echo "<input class='button' type='submit' value='show tickets'>";
-    echo "</form>";
     if($_GET['admin']) {
         echo "<form action='editBusiness.php' method='POST'>";
         echo "<input type='hidden' name='businessIdToEdit' value='".$row['id']."'>";
         echo "<input class='button' type='submit' value='edit'></form>";
     }
-    echo "</li>";
+    echo "</div>";
 }
-echo "</ul>";
+echo "</div>";
 }
 
 function business_id_select($mysqli)
 {
-if($_POST['businessId']) {
-    echo "<input type='hidden' name='business_id' value='".$_POST['businessId']."'>";
+if($_GET['b']) {
+    echo "<input type='hidden' name='business_id' value='".$_GET['b']."'>";
     return;
 }
 // Perform Query
@@ -79,17 +68,17 @@ echo "</select><br/>";
 function ticketList($mysqli)
 {
 // Perform Query
-if(!$_POST['businessId']) return;
+if(!$_GET['b']) return;
 $result = $mysqli->query("select t.id as id, b.name as name, t.what as what, t.payment as payment, t.last_modified as date from brm_tickets t left join brm_business b on b.id = t.business_id where b.id =
-".$mysqli->real_escape_string($_POST['businessId'])." order by t.last_modified desc;");
+".$mysqli->real_escape_string($_GET['b'])." order by t.last_modified desc;");
 // This shows the actual query sent to MySQL, and the error. Useful for debugging.
 if (!$result) {
     $message  = 'Invalid query: ' . mysql_error() . "\n";
     die($message);
 }
-echo "<ul>";
+echo "<div class='list'>";
 while ($row = $result->fetch_assoc()) {
-    echo "<li>";
+    echo "<div class='ticket'>";
     echo "[".$row['id']."] ".$row['name'].": ".$row['what']."<br/>cost: ".$row['payment']."<br/>date: ".$row['date'];
     echo "<br />\n";
     if($_GET['admin']) {
@@ -97,25 +86,25 @@ while ($row = $result->fetch_assoc()) {
         echo "<input type='hidden' name='ticketIdToEdit' value='".$row['id']."'>";
         echo "<input class='button' type='submit' value='edit'></form>";
     }
-    echo "</li>";
+    echo "</div>";
 }
-echo "</ul>";
+echo "</div>";
 }
 
 function contacts($mysqli)
 {
-if(!$_POST['businessId']) return;
+if(!$_GET['b']) return;
 // Perform Query
 $result = $mysqli->query("select c.id as id, b.name as bname, c.name as name, c.mail as mail, c.tel as tel from brm_contact c left join brm_business b on b.id = c.business_id
- where b.id = ".$mysqli->real_escape_string($_POST['businessId'])." order by c.last_modified desc;");
+ where b.id = ".$mysqli->real_escape_string($_GET['b'])." order by c.last_modified desc;");
 // This shows the actual query sent to MySQL, and the error. Useful for debugging.
 if (!$result) {
     $message  = 'Invalid query: ' . mysql_error() . "\n";
     die($message);
 }
-echo "<ul>";
+echo "<div class='list'>";
 while ($row = $result->fetch_assoc()) {
-    echo "<li>";
+    echo "<div class='ticket'>";
     echo $row['bname'].": ".$row['name']." , email: <a href = 'mailto:".$row['mail']."'>".$row['mail']."</a>, tel: ".$row['tel'];
     echo "<br />\n";
     if($_GET['admin']) {
@@ -123,24 +112,42 @@ while ($row = $result->fetch_assoc()) {
         echo "<input type='hidden' name='contactIdToEdit' value='".$row['id']."'>";
         echo "<input class='button' type='submit' value='edit'></form>";
     }
-    echo "</li>";
+    echo "</div>";
 }
-echo "</ul>";
+echo "</div>";
 }
 ?>
 
 <div id="header">
 <a href="index.php" class="button">home</a>
+<?php if($_GET['b']) { ?>
+<a href="index.php?b=<?php echo $_GET['b'] ?>&admin=true" class="button">edit</a>
+<?php } else { ?>
 <a href="index.php?admin=true" class="button">edit</a>
+<?php } ?>
 </div>
 
-<?php if($_POST['businessId']) { ?>
+<?php if($_GET['b']) { ?>
+<div class='business_details'>
+<?php
+$result = $mysqli->query("select * from brm_business where id = ".$mysqli->real_escape_string($_GET['b']).";");
+while ($row = $result->fetch_assoc()) {
+    if ($row['type']) {
+        echo "type: ".$row['type']."<br />";
+    }
+    echo "business name: ".$row['name']."<br />";
+    echo "web: <a href='".$row['site']."'>".$row['site']."</a><br />";
+    echo "tel: ".$row['tel']."<br />";
+    $business_name = $row['name'];
+}
+?>
+</div>
 <div id="tickets">
-    <h2> tickets </h2>
+    <h2> tickets for <?php echo $business_name; ?></h2>
     <?php
     ticketList($mysqli);
     ?>
-    <div style="border: 1px solid black;">
+    <div class="add_form">
         <h4> add ticket</h4>
         <form action="addTicket.php" method="post">
         <?php business_id_select($mysqli); ?>
@@ -156,7 +163,7 @@ echo "</ul>";
     <?php
     contacts($mysqli);
     ?>
-    <div style="border: 1px solid black;">
+    <div class="add_form">
         <h4> add contact</h4>
         <form action="addContact.php" method="post">
         <?php business_id_select($mysqli); ?>
@@ -170,11 +177,10 @@ echo "</ul>";
 <?php } ?>
 
 <div id="business_list">
-    <h2> business </h2>
     <?php
     businessList($mysqli);
     ?>
-    <div style="border: 1px solid black;">
+    <div class="add_form">
         <h4> add business</h4>
         <form action="addBusiness.php" method="post">
         <label for="name">business name</label><input name="name" type="text" /><br/>

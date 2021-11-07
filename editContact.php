@@ -8,6 +8,17 @@ $result = $mysqli->query("select * from brm_contact where
 							id = ".$mysqli->real_escape_string($_POST["contactIdToEdit"]).";");
 $row = $result->fetch_assoc();
 ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>contact manager - edit contact</title>
+<LINK REL="StyleSheet" HREF="style.css" TYPE="text/css" MEDIA="screen" />
+<link rel="icon"
+      type="image/png"
+      href="favicon.png" />
+<meta name="author" content="Marco Paladini">
+</head>
+<body>
 <div style="border: 1px solid black;">
 <h4> Edit Contact</h4>
 <form action="editContact.php" method="POST">
@@ -19,6 +30,7 @@ $row = $result->fetch_assoc();
 <input type="submit" value="Edit"></input>
 </form>
 </div>
+</body>
 <?php
 }
 else // don't show edit form, perform edit
