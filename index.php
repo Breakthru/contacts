@@ -32,7 +32,10 @@ if (!$result) {
 echo "<ul>";
 while ($row = $result->fetch_assoc()) {
     echo "<li>";
-    echo $row['type'].": ".$row['name']." , web: <a href='".$row['site']."'>".$row['site']."</a> , tel: ".$row['tel'];
+    if ($row['type']) {
+        echo $row['type']." ";
+    }
+    echo $row['name']." , web: <a href='".$row['site']."'>".$row['site']."</a> , tel: ".$row['tel'];
     echo "<br />";
     $action = "index.php";
     if($_GET['admin']) {
@@ -131,36 +134,18 @@ echo "</ul>";
 <a href="index.php?admin=true" class="button">edit</a>
 </div>
 
+<?php if($_POST['businessId']) { ?>
 <div id="tickets">
     <h2> tickets </h2>
     <?php
     ticketList($mysqli);
     ?>
-    <?php if($_POST['businessId']) { ?>
     <div style="border: 1px solid black;">
         <h4> add ticket</h4>
         <form action="addTicket.php" method="post">
         <?php business_id_select($mysqli); ?>
         <label for="what">what</label><textarea name="what" type="textarea"></textarea><br/>
         <label for="payment">paid</label><input name="payment" type="text" value="0.00" size="5"><br/>
-        <input type="submit" value="add">
-        </form>
-    </div>
-    <?php } ?>
-</div>
-
-<div id="business_list">
-    <h2> business </h2>
-    <?php
-    businessList($mysqli);
-    ?>
-    <div style="border: 1px solid black;">
-        <h4> add new</h4>
-        <form action="addBusiness.php" method="post">
-        <label for="name">business name</label><input name="name" type="text" /><br/>
-        <label for="type">business type</label><input name="type" type="text" /><br/>
-        <label for="site">business website</label><input name="site" type="text" /><br/>
-        <label for="tel">business telephone</label><input name="tel" type="text" /><br/>
         <input type="submit" value="add">
         </form>
     </div>
@@ -171,7 +156,6 @@ echo "</ul>";
     <?php
     contacts($mysqli);
     ?>
-    <?php if($_POST['businessId']) { ?>
     <div style="border: 1px solid black;">
         <h4> add contact</h4>
         <form action="addContact.php" method="post">
@@ -182,8 +166,26 @@ echo "</ul>";
         <input type="submit" value="add">
         </form>
     </div>
-    <?php } ?>
 </div>
+<?php } ?>
+
+<div id="business_list">
+    <h2> business </h2>
+    <?php
+    businessList($mysqli);
+    ?>
+    <div style="border: 1px solid black;">
+        <h4> add business</h4>
+        <form action="addBusiness.php" method="post">
+        <label for="name">business name</label><input name="name" type="text" /><br/>
+        <label for="type">business type</label><input name="type" type="text" /><br/>
+        <label for="site">business website</label><input name="site" type="text" /><br/>
+        <label for="tel">business telephone</label><input name="tel" type="text" /><br/>
+        <input type="submit" value="add">
+        </form>
+    </div>
+</div>
+
 <?php
 // clean up
 $mysqli->close();
