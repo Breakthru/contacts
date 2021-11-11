@@ -82,6 +82,7 @@ if (!($_SESSION['username_check']==$user and $_SESSION['password_check']==$passw
           echo "<br />\n";
           if ($_GET['admin']) {
               echo "<form action='editTicket.php' method='POST'>";
+              echo "<input type='hidden' name='business_id' value='".$_GET['b']."'>";
               echo "<input type='hidden' name='ticketIdToEdit' value='".$row['id']."'>";
               echo "<input class='button' type='submit' value='edit'></form>";
           }
@@ -119,7 +120,7 @@ if (!($_SESSION['username_check']==$user and $_SESSION['password_check']==$passw
   }
   ?>
   <div id="header">
-    <a href="index.php" class="button">home</a> <?php if ($_GET['b']) { ?> <a href="index.php?b=%3C?php%20echo%20$_GET['b']%20?%3E&amp;admin=true" class="button">edit</a> <?php } else { ?> <a href="index.php?admin=true" class="button">edit</a> <?php } ?>
+    <a href="index.php" class="button">home</a> <?php if ($_GET['b']) { ?> <a href="index.php?b=<?php echo $_GET['b']; ?>&admin=true" class="button">edit</a> <?php } else { ?> <a href="index.php?admin=true" class="button">edit</a> <?php } ?>
   </div><?php if ($_GET['b']) { ?>
   <div class='business_details'>
     <?php

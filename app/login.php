@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 include_once("codes.php");
 
@@ -27,4 +28,3 @@ if ($_SESSION['username_check']==$user and $_SESSION['password_check']==$passwor
     printLoginForm();
     die();
 }
-?>

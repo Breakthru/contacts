@@ -14,7 +14,9 @@ $result = $mysqli->query($query);
 <!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="refresh" content="0; URL='index.php?b=<?php echo $_POST['business_id']; ?>'" />
+<?php
+  echo "<meta http-equiv='refresh' content=\"0; URL='index.php?b=".$_POST['business_id']."'\"/>";
+?>
   <title>contact added</title>
 </head>
 <body>

@@ -1,9 +1,9 @@
 <?php include_once("login.php"); ?><?php
 $mysqli = new mysqli('localhost', $dbuser, $dbpassword, $dbname);
 if ($_POST["businessIdToEdit"] && !$_POST["businessId"]) { // show edit form
-// Perform Query
-    $result = $mysqli->query("select * from brm_business where
-                                                        id = ".$mysqli->real_escape_string($_POST["businessIdToEdit"]).";");
+    // Perform Query
+    $result = $mysqli->query("select * from brm_business where id = ".
+        $mysqli->real_escape_string($_POST["businessIdToEdit"]).";");
     $row = $result->fetch_assoc()
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
@@ -27,19 +27,19 @@ if ($_POST["businessIdToEdit"] && !$_POST["businessId"]) { // show edit form
     </form>
   </div><?php
 } else {
-      $query = "update brm_business set name = '".$mysqli->real_escape_string($_POST["name"])."',
+    $query = "update brm_business set name = '".$mysqli->real_escape_string($_POST["name"])."',
   site = '".$mysqli->real_escape_string($_POST["site"])."',
   last_modified = now(),
   tel = '".$mysqli->real_escape_string($_POST["tel"])."',
   type = '".$mysqli->real_escape_string($_POST["type"])."'
   where id = '".$mysqli->real_escape_string($_POST["businessId"])."';";
 
-      // Perform Query
-      $result = $mysqli->query($query);
+    // Perform Query
+    $result = $mysqli->query($query);
 
-      // return to site :)
-      include_once("index.php");
-  }
+    // return to site :)
+    include_once("index.php");
+}
   ?>
 </body>
 </html>

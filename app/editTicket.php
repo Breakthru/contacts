@@ -18,14 +18,18 @@ if ($_POST["ticketIdToEdit"] && !$_POST["ticketId"]) { // show edit form
   <div style="border: 1px solid black;">
     <h4>Edit Ticket</h4>
     <form action="editTicket.php" method="post">
-      <input type="hidden" name="ticketId" value="<?php echo $_POST['ticketIdToEdit'] ?>"><br>
+      <input type="hidden" name="business_id" value="<?php echo $_POST['business_id']; ?>">
+      <input type="hidden" name="ticketId" value="<?php echo $_POST['ticketIdToEdit']; ?>">
       <label for="what">what</label>
       <textarea name="what" type="textarea"><?php echo $row['what']; ?></textarea><br>
       <label for="paid">payment</label><input name="paid" type="text" value="<?php echo $row['payment']; ?>"><br>
       <input type="submit" value="Edit">
     </form>
-  </div><?php
-} else { // don't show edit form, perform edit
+  </div>
+</body>
+</html>
+<?php
+} elseif ($_POST['ticketId']) { // don't show edit form, perform edit
         $query = "update brm_tickets set        
   what = '".$mysqli->real_escape_string($_POST["what"])."',
   date = now(),
@@ -35,10 +39,19 @@ if ($_POST["ticketIdToEdit"] && !$_POST["ticketId"]) { // show edit form
 
         // Perform Query
         $result = $mysqli->query($query);
-
-        // return to site :)
-        include_once("index.php");
     }
-  ?>
+if (!$_POST["ticketIdToEdit"]) {
+    // either after running the edit or invalid request, return to home?>
+<!DOCTYPE html>
+<html>
+<head>
+<?php
+  echo "<meta http-equiv='refresh' content=\"0; URL='index.php?b=".$_POST['business_id']."'\"/>"; ?>
+  <title>ticket added</title>
+</head>
+<body>
 </body>
 </html>
+
+<?php
+} ?>
