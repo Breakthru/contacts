@@ -1,7 +1,7 @@
 <?php
-
-$user = "USERNAME";
-$password = "PASSWORD";
-$dbuser = "DATABASE_USERNAME";
-$dbpassword = "DATABASE_PASSWORD";
-$dbname = "DATABASE_NAME";
+$user = <username>;
+$password = <user password>;
+$dbuser = <database username>;
+$dbpassword = <database password>;
+$dbname = <database name>;
+?>
