@@ -76,7 +76,7 @@ function ticketList($mysqli)
 
     while ($row = $result->fetch_assoc()) {
         echo "<div class='row'><div class='twelve columns'>";
-        printf("<pre><code>%s</code></pre>", $row['what']);
+        printf("<p class='code_ticket'>%s</p>", $row['what']);
         printf("<p>[%s]&nbsp;&nbsp;%s CET</p>", $row['id'], $row['date']);
         echo "</div></div>";
         if(isset($_GET['admin'])) {
