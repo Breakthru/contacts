@@ -1,0 +1,1 @@
+ALTER TABLE `brm_tickets` DROP `payment`;

@@ -1,4 +1,20 @@
 <?php
+// read credentials from disk
+include_once("codes.php");
+
+// write log into db
+// load database
+$mysqli = new mysqli('localhost', $dbuser, $dbpassword, $dbname);
+$query = "insert into brm_logs (user_agent, ip_address, referrer, url, timestamp) values ('"
+.$mysqli->real_escape_string($_SERVER['HTTP_USER_AGENT'])."','"
+.$mysqli->real_escape_string($_SERVER['REMOTE_ADDR'])."','"
+.$mysqli->real_escape_string($_SERVER['HTTP_REFERER'])."','"
+.$mysqli->real_escape_string($_SERVER['REQUEST_URI'])."', now());";
+
+// Perform Query
+$result = $mysqli->query($query);
+
+
 // redirect to https
 if (!str_starts_with($_SERVER['HTTP_HOST'], "192.168") && $_SERVER['HTTP_HOST'] !== "localhost" && $_SERVER["HTTP_X_FORWARDED_PROTO"] !== "https") {
     $location = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
@@ -7,37 +23,38 @@ if (!str_starts_with($_SERVER['HTTP_HOST'], "192.168") && $_SERVER['HTTP_HOST'] 
     exit;
 }
 session_start();
-// read credentials from disk
-include_once("codes.php");
 
-function printLoginForm()
-{
-    echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">";
-    echo "<html>";
-    echo "<head><title>contact manager application</title>";
-    echo "<meta name='viewport' content='width=device-width, initial-scale=1' />";
-    echo "</head><body>";
-    echo "<div style='text-align: center;'>";
-    echo "<form action='index.php' method='post'>";
-    echo "<label for='user'>username&nbsp;</label>";
-    echo "<input name='user' type='text' /><br/>";
-    echo "<label for='password'>password&nbsp;</label>";
-    echo "<input name='password' type='password' /><br/>";
-    echo "<input type='submit' value='login' />";
-    echo "</form>";
-    echo "</body></html>";
-    echo "</div>";
-    die();
-}
 
-if ($_POST['user']===$user AND password_verify($_POST['password'], $password_hash) )
+if (isset($_POST['user']) AND isset($_POST['password']) AND $_POST['user']===$user AND password_verify($_POST['password'], $password_hash))
 {	// login successful
 	$_SESSION['user_token']=$user_token;
 }
 // check current session
 if (!array_key_exists('user_token', $_SESSION) || !$_SESSION['user_token']==$user_token)
 {
-    printLoginForm();
+    ?>
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="utf-8">
+            <title>contact manager application</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <link rel="stylesheet" href="css/style.css">
+        </head>
+        <body>
+            <div class="container">
+                <form action='index.php' method='post'>
+                <div class="row"><div class="twelve columns">
+                    <label for='user'>username</label>
+                    <input name='user' id='user' type='text'>
+                    <label for='password'>password</label>
+                    <input name='password' id='password' type='password'>
+                    <br>
+                    <input type='submit' value='login'>
+                </div></div>
+        </body>
+    </html>
+    <?php
     die();
 }
 // logged in.
