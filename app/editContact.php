@@ -21,6 +21,7 @@ $row = $result->fetch_assoc();
     <div class="container">
         <h4>Edit Contact <?=$row['name']?></h4>
         <form action="editContact.php" method="POST">
+            <input type="hidden" name="contactId" value="<?php echo $_POST['contactIdToEdit'] ?>">
             <label for="name">name</label><input id="name" name="name" type="text" value="<?php echo $row['name'];?>">
             <label for="mail">email</label><input id="mail" name="mail" type="text" value="<?php echo $row['mail'];?>">
             <label for="tel">telephone</label><input id="tel" name="tel" type="text" value="<?php echo $row['tel'];?>">
@@ -39,7 +40,7 @@ last_modified = now(),
 name = '".$mysqli->real_escape_string($_POST["name"])."',
 mail = '".$mysqli->real_escape_string($_POST["mail"])."',
 tel = '".$mysqli->real_escape_string($_POST["tel"])."'
-where id = '".$mysqli->real_escape_string($_POST["contactId"])."';";
+WHERE id = '".$mysqli->real_escape_string($_POST["contactId"])."';";
 
 // Perform Query
 $result = $mysqli->query($query);

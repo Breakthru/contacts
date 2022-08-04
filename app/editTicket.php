@@ -35,10 +35,8 @@ else // don't show edit form, perform edit
 {
     $query = "update brm_tickets set
     what = '".$mysqli->real_escape_string($_POST["what"])."',
-    date = now(),
-    last_modified = now(),
-    payment = '".$mysqli->real_escape_string($_POST["paid"])."'
-    where id = '".$mysqli->real_escape_string($_POST["ticketId"])."';";
+    last_modified = now()
+    WHERE id = '".$mysqli->real_escape_string($_POST["ticketId"])."';";
 
     // Perform Query
     $result = $mysqli->query($query);
