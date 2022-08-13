@@ -17,11 +17,7 @@ if (isset($_POST['logout']))
   unset($_SESSION['user_token']);
   unset($_SESSION['user_is_admin']);
   unset($_SESSION['display_user_name']);
-  echo "<!DOCTYPE html>";
-  echo "<html><head>";
-  echo "<meta http-equiv='refresh' content='1;url=index.php'>";
-  echo "</head><body>";
-  echo "<h1>Logout successful</h1></body></html>";
+  echo "<h1>Logout successful</h1>";
   die();
 }
 
@@ -56,7 +52,7 @@ if (!array_key_exists('user_token', $_SESSION))
             <meta charset="utf-8">
             <title>Welcome to the children's bank</title>
             <meta name="viewport" content="width=device-width, initial-scale=1">
-            <link rel="stylesheet" href="../contacts/css/style.css">
+            <link rel="stylesheet" href="../css/style.css">
         </head>
         <body>
             <div class="container">
@@ -96,7 +92,7 @@ if (!$_SESSION['user_is_admin']) {
         <meta charset="utf-8">
         <title>Welcome to the children's bank</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="../contacts/css/style.css">
+        <link rel="stylesheet" href="../css/style.css">
     </head>
     <body>
         <div class="container">
@@ -108,7 +104,7 @@ if (!$_SESSION['user_is_admin']) {
         <hr>
 <?php
     // Perform Query
-    $result = $mysqli->query("SELECT DATE_FORMAT(DATE_SUB(timestamp, INTERVAL 1 HOUR), '%a %c %b %Y %H:%i') as timestamp, reference, amount  FROM `toy_bank_transactions` WHERE `account_to`=\"".$mysqli->real_escape_string($_SESSION['display_user_name'])."\" ORDER BY timestamp ASC;");
+    $result = $mysqli->query("SELECT DATE_FORMAT(CONVERT_TZ(timestamp, 'UTC', 'Europe/London'), '%a %c %b %Y %H:%i') as timestamp, reference, amount  FROM `toy_bank_transactions` WHERE `account_to`=\"".$mysqli->real_escape_string($_SESSION['display_user_name'])."\" ORDER BY timestamp ASC;");
     // This shows the actual query sent to MySQL, and the error. Useful for debugging.
     if (!$result) {
         $message  = 'Invalid query: ' . $mysqli->error . "\n";
@@ -119,16 +115,15 @@ if (!$_SESSION['user_is_admin']) {
     while ($row = $result->fetch_assoc()) {
         echo "<div class='row'><div class='twelve columns'>";
         printf("<p class='code_ticket'>");
-        printf("&nbsp;%s", $row['timestamp']);
-        printf("&nbsp;for: %s", $row['reference']);
-        printf("&nbsp;&#163; %s", number_format((float)($row['amount']/100), 2, '.', ''));
+        printf("&nbsp;date and time: %s |", $row['timestamp']);
+        printf("&nbsp;%s |", $row['reference']);
+        printf("&nbsp;amount: &#163; %s |", number_format((float)($row['amount']/100), 2, '.', ''));
         $balance = $balance + $row['amount'];
         printf("&nbsp;balance: &#163; %s", number_format((float)($balance/100), 2, '.', ''));
         printf("</p><br>");
         echo "</div></div>";
     }
     echo "</div>";
-    printf("<h1 id='total'>Total reward: &#163; %s</h1>", number_format((float)($balance/100), 2, '.', ''));
     echo "<script src=\"sort.js\"></script>";
 ?>
     </body>
@@ -145,7 +140,7 @@ if ($_SESSION['user_is_admin']) {
         <meta charset="utf-8">
         <title>Welcome to the children's bank</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="../contacts/css/style.css">
+        <link rel="stylesheet" href="../css/style.css">
     </head>
     <body>
         <div class="container">
@@ -171,7 +166,7 @@ if ($_SESSION['user_is_admin']) {
                     "'".$mysqli->real_escape_string($amount_pence)."', ".
                     "'".$mysqli->real_escape_string($_POST['reference'])."');");
                     if (!$result) {
-                        $outcome  = 'Internal error: ' . $mysqli->error . "\n";
+                        $outcome  = 'Internal error: ' . mysql_error() . "\n";
                     } else {
                         $outcome = "transferred ".number_format((float)($amount_pence/100), 2, '.', '')." to ".$account_to;
                     }
@@ -205,7 +200,7 @@ if ($_SESSION['user_is_admin']) {
         <label for="amount">Amount:</label>
         <input name="amount" type="text" id="amount" value="1.00">
         <?php
-        $reward_types = ["reading", "writing", "maths", "cleaning"];
+        $reward_types = ["reading", "writing", "cleaning"];
         ?>
         <label for="reference">Description:</label>
         <select name="reference" id="reference">

@@ -8,4 +8,7 @@ children.forEach(tx => {
     sorted.insertBefore(tx.cloneNode(true), sorted.firstChild);
 });
 transactions.parentNode.appendChild(sorted);
+const total = document.getElementById('total');
+transactions.parentNode.insertBefore(total, transactions.parentNode.firstChild);
 transactions.parentNode.removeChild(transactions);
+
