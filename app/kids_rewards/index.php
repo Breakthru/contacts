@@ -104,24 +104,27 @@ if (!$_SESSION['user_is_admin']) {
         <hr>
 <?php
     // Perform Query
-    $result = $mysqli->query("SELECT * FROM `toy_bank_transactions` WHERE `account_to`=\"".$mysqli->real_escape_string($_SESSION['display_user_name'])."\" ORDER BY timestamp DESC;");
+    $result = $mysqli->query("SELECT DATE_FORMAT(CONVERT_TZ(timestamp, 'UTC', 'Europe/London'), '%a %c %b %Y %H:%i') as timestamp, reference, amount  FROM `toy_bank_transactions` WHERE `account_to`=\"".$mysqli->real_escape_string($_SESSION['display_user_name'])."\" ORDER BY timestamp ASC;");
     // This shows the actual query sent to MySQL, and the error. Useful for debugging.
     if (!$result) {
-        $message  = 'Invalid query: ' . mysql_error() . "\n";
+        $message  = 'Invalid query: ' . $mysqli->error . "\n";
         die($message);
     }
     $balance = 0;
+    echo "<div id='transactions'>";
     while ($row = $result->fetch_assoc()) {
         echo "<div class='row'><div class='twelve columns'>";
         printf("<p class='code_ticket'>");
-        printf("&nbsp;date and time: %s", $row['timestamp']);
-        printf("&nbsp;%s", $row['reference']);
-        printf("&nbsp;amount: &#163; %s", number_format((float)($row['amount']/100), 2, '.', ''));
+        printf("&nbsp;date and time: %s |", $row['timestamp']);
+        printf("&nbsp;%s |", $row['reference']);
+        printf("&nbsp;amount: &#163; %s |", number_format((float)($row['amount']/100), 2, '.', ''));
         $balance = $balance + $row['amount'];
         printf("&nbsp;balance: &#163; %s", number_format((float)($balance/100), 2, '.', ''));
-        printf("</p>");
+        printf("</p><br>");
         echo "</div></div>";
     }
+    echo "</div>";
+    echo "<script src=\"sort.js\"></script>";
 ?>
     </body>
 </html>
@@ -195,9 +198,18 @@ if ($_SESSION['user_is_admin']) {
         ?>
         </select>
         <label for="amount">Amount:</label>
-        <input name="amount" type="text" id="amount">
+        <input name="amount" type="text" id="amount" value="1.00">
+        <?php
+        $reward_types = ["reading", "writing", "cleaning"];
+        ?>
         <label for="reference">Description:</label>
-        <input name="reference" type="text" id="reference">
+        <select name="reference" id="reference">
+        <?php
+        foreach ($reward_types as $ref) {
+            printf("<option value=%s>%s</option>", $ref, $ref);
+        }
+        ?>
+        </select>
         <input type="submit" value="send">
         </form>
     </body>
