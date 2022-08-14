@@ -108,7 +108,7 @@ if (!$_SESSION['user_is_admin']) {
         <hr>
 <?php
     // Perform Query
-    $result = $mysqli->query("SELECT DATE_FORMAT(DATE_SUB(timestamp, INTERVAL 1 HOUR), '%a %c %b %Y %H:%i') as timestamp, reference, amount  FROM `toy_bank_transactions` WHERE `account_to`=\"".$mysqli->real_escape_string($_SESSION['display_user_name'])."\" ORDER BY timestamp ASC;");
+    $result = $mysqli->query("SELECT DATE_FORMAT(DATE_SUB(timestamp, INTERVAL 1 HOUR), '%a %c %b %Y %H:%i') as timestamp, reference, amount, account_from FROM `toy_bank_transactions` WHERE `account_to`=\"".$mysqli->real_escape_string($_SESSION['display_user_name'])."\" OR `account_from`=\"".$mysqli->real_escape_string($_SESSION['display_user_name'])."\" ORDER BY timestamp ASC;");
     // This shows the actual query sent to MySQL, and the error. Useful for debugging.
     if (!$result) {
         $message  = 'Invalid query: ' . $mysqli->error . "\n";
@@ -117,12 +117,16 @@ if (!$_SESSION['user_is_admin']) {
     $balance = 0;
     echo "<div id='transactions'>";
     while ($row = $result->fetch_assoc()) {
+        $amount = $row['amount'];
+        if ($row['account_from']===$_SESSION['display_user_name']) {
+          $amount = - $row['amount'];
+        }
         echo "<div class='row'><div class='twelve columns'>";
         printf("<p class='code_ticket'>");
         printf("&nbsp;%s", $row['timestamp']);
         printf("&nbsp;for: %s", $row['reference']);
-        printf("&nbsp;&#163; %s", number_format((float)($row['amount']/100), 2, '.', ''));
-        $balance = $balance + $row['amount'];
+        printf("&nbsp;&#163; %s", number_format((float)($amount/100), 2, '.', ''));
+        $balance = $balance + $amount;
         printf("&nbsp;balance: &#163; %s", number_format((float)($balance/100), 2, '.', ''));
         printf("</p><br>");
         echo "</div></div>";
@@ -186,6 +190,42 @@ if ($_SESSION['user_is_admin']) {
             echo "<button><a href=\"index.php\">back</a></button>";
             die();
         }
+                if (array_key_exists("account_from", $_POST))
+        {
+            // process transaction
+            // validate user input
+            $outcome = "validation error";
+            $user_id = array_search($_POST['account_from'], $users);
+            if ($user_id !== false) {
+                $account_from = $users[$user_id];
+                $amount = floatval($_POST['amount']);
+                if ($amount > 0) {
+                    // not proper validation but this is a toy anyway
+                    $amount_pence = intval(100*$amount);
+                    // execute transaction
+                    $result = $mysqli->query(
+                    "INSERT INTO `toy_bank_transactions` ".
+                    "(`account_from`, `account_to`, `amount`, `reference`) VALUES ".
+                    "('".$mysqli->real_escape_string($account_from)."', 'mum', ".
+                    "'".$mysqli->real_escape_string($amount_pence)."', ".
+                    "'".$mysqli->real_escape_string($_POST['reference'])."');");
+                    if (!$result) {
+                        $outcome  = 'Internal error: ' . $mysqli->error . "\n";
+                    } else {
+                        $outcome = "spent ".number_format((float)($amount_pence/100), 2, '.', '')." for ".$account_from;
+                    }
+                } else {
+                    $outcome = "amount must be at least 0.01";
+                }
+            } else {
+                $outcome = "account not found";
+            }
+            printf("<h2>%s</h2>", $outcome);
+            echo "<p>do not reload the page</p>";
+            echo "<button><a href=\"index.php\">back</a></button>";
+            die();
+        }
+
         ?>
         <form action='index.php' method='post'>
         <input type='hidden' name='logout' value='logout'>
@@ -216,6 +256,22 @@ if ($_SESSION['user_is_admin']) {
         ?>
         </select>
         <input type="submit" value="send">
+        </form>
+        <h2>Spend rewards</h2>
+        <form action='index.php' method='post'>
+        <label for="account_from">For:</label>
+        <select name="account_from" id="account_from">
+        <?php
+        foreach ($users as $account_from) {
+            printf("<option value=%s>%s</option>", $account_from, $account_from);
+        }
+        ?>
+        </select>
+        <label for="amount">Amount:</label>
+        <input name="amount" type="text" id="amount" value="1.00">
+        <label for="reference">Description:</label>
+        <input name="reference" type="text" id="reference">
+        <input type="submit" value="spend">
         </form>
     </body>
 </html>
