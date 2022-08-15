@@ -28,7 +28,7 @@ if (isset($_POST['logout']))
 if (isset($_POST['user']) AND isset($_POST['password']))
 {
     // search for user
-    $user_id = array_search($_POST['user'], $users);
+    $user_id = array_search(strtolower($_POST['user']), $users);
     if ($user_id !== false AND password_verify($_POST['password'], $passwords_hash[$user_id]))
     {
         // login successful
@@ -39,7 +39,7 @@ if (isset($_POST['user']) AND isset($_POST['password']))
         die();
 	}
 	// check admin login?
-	if ($_POST['user']===$admin_user AND password_verify($_POST['password'], $admin_password_hash))
+	if (strtolower($_POST['user'])===$admin_user AND password_verify($_POST['password'], $admin_password_hash))
 	{
 	    $_SESSION['user_token'] = $admin_user_token;
 	    $_SESSION['user_is_admin'] = true;
@@ -47,7 +47,7 @@ if (isset($_POST['user']) AND isset($_POST['password']))
 	}
 }
 // if not logged in, send login form
-if (!array_key_exists('user_token', $_SESSION))
+if (!array_key_exists('user_token', $_SESSION) || (!$_SESSION['user_is_admin'] && array_search($_SESSION['user_token'], $user_tokens)===false))
 {
     ?>
     <!DOCTYPE html>
@@ -56,7 +56,7 @@ if (!array_key_exists('user_token', $_SESSION))
             <meta charset="utf-8">
             <title>Welcome to the children's bank</title>
             <meta name="viewport" content="width=device-width, initial-scale=1">
-            <link rel="stylesheet" href="../contacts/css/style.css">
+            <link rel="stylesheet" href="style.css">
         </head>
         <body>
             <div class="container">
@@ -96,7 +96,7 @@ if (!$_SESSION['user_is_admin']) {
         <meta charset="utf-8">
         <title>Welcome to the children's bank</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="../contacts/css/style.css">
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
         <div class="container">
@@ -141,7 +141,7 @@ if (!$_SESSION['user_is_admin']) {
 // end regular user page
 }
 // admin page
-if ($_SESSION['user_is_admin']) {
+if ($_SESSION['user_is_admin'] && $_SESSION['user_token'] == $admin_user_token) {
 ?>
 <!DOCTYPE html>
 <html>
@@ -149,7 +149,7 @@ if ($_SESSION['user_is_admin']) {
         <meta charset="utf-8">
         <title>Welcome to the children's bank</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="../contacts/css/style.css">
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
         <div class="container">
